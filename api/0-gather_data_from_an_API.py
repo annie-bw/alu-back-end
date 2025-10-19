@@ -1,29 +1,26 @@
 #!/usr/bin/python3
 """
-Returns information about an employee's TODO list progress.
+Script that retrieves and displays employee TODO list progress from an API
 """
-
 import requests
 import sys
 
 
 if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
+    user_id = sys.argv[1]
 
-    user_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
-    todos_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos"
+    user_url = "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
+    todos_url = "https://jsonplaceholder.typicode.com/todos?userId={}".format(
+        user_id)
 
-    user = requests.get(user_url).json()
-    todos = requests.get(todos_url).json()
+    user_data = requests.get(user_url).json()
+    todos_data = requests.get(todos_url).json()
 
-    completed_tasks = [task["title"] for task in todos if task["completed"]]
-    total_tasks = len(todos)
+    employee_name = user_data.get("name")
+    completed_tasks = [task for task in todos_data if task.get("completed")]
 
-    print(
-        "Employee {} is done with tasks({}/{}):".format(
-            user["name"], len(completed_tasks), total_tasks
-        )
-    )
+    print("Employee {} is done with tasks({}/{}):".format(
+        employee_name, len(completed_tasks), len(todos_data)))
 
-    for title in completed_tasks:
-        print("\t {}".format(title))
+    for task in completed_tasks:
+        print("\t {}".format(task.get("title")))
