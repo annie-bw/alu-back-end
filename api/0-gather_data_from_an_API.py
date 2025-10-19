@@ -11,20 +11,27 @@ import sys
 if __name__ == "__main__":
     user_id = int(sys.argv[1])
 
-    # Fetch user information
-    user_url = f"https://jsonplaceholder.typicode.com/users/{user_id}"
+    # Fetch user info
+    user_url = (
+        "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
+    )
     user = requests.get(user_url).json()
     employee_name = user.get("name")
 
-    # Fetch user's TODO list
-    todos_url = f"https://jsonplaceholder.typicode.com/users/{user_id}/todos"
+    # Fetch user's todos
+    todos_url = (
+        "https://jsonplaceholder.typicode.com/users/{}/todos".format(user_id)
+    )
     todos = requests.get(todos_url).json()
 
-    # Count completed tasks
-    completed_tasks = [task.get("title") for task in todos if task.get("completed")]
+    # Completed tasks
+    completed = [t.get("title") for t in todos if t.get("completed")]
 
-    print(f"Employee {employee_name} is done with tasks"
-          f"({len(completed_tasks)}/{len(todos)}):")
+    print(
+        "Employee {} is done with tasks({}/{}):".format(
+            employee_name, len(completed), len(todos)
+        )
+    )
 
-    for task in completed_tasks:
-        print(f"\t {task}")
+    for task in completed:
+        print("\t {}".format(task))
