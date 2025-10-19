@@ -4,33 +4,28 @@
 import requests
 import sys
 
-
-def main():
-    """main function"""
+if __name__ == "__main__":
     user_id = int(sys.argv[1])
-    todo_url = 'https://jsonplaceholder.typicode.com/todos'
-    user_url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
 
-    response = requests.get(todo_url)
+    user_url = f'https://jsonplaceholder.typicode.com/users/{user_id}'
+    todo_url = f'https://jsonplaceholder.typicode.com/users/{user_id}/todos'
 
-    total_questions = 0
-    completed = []
-    for todo in response.json():
+    # Get user info
+    user_data = requests.get(user_url).json()
+    if not user_data or 'name' not in user_data:
+        print("Employee ID not found")
+        sys.exit(1)
 
-        if todo['userId'] == user_id:
-            total_questions += 1
+    user_name = user_data['name']
 
-            if todo['completed']:
-                completed.append(todo['title'])
+    # Get todos
+    todos = requests.get(todo_url).json()
 
-    user_name = requests.get(user_url).json()['name']
+    # Count tasks
+    total_tasks = len(todos)
+    completed_tasks = [t['title'] for t in todos if t['completed']]
 
-    printer = ("Employee {} is done with tasks({}/{}):".format(user_name,
-               len(completed), total_questions))
-    print(printer)
-    for q in completed:
-        print("\t {}".format(q))
-
-
-if __name__ == '__main__':
-    main()
+    # Print results
+    print(f"Employee {user_name} is done with tasks({len(completed_tasks)}/{total_tasks}):")
+    for task in completed_tasks:
+        print(f"\t {task}")
