@@ -8,29 +8,28 @@ import sys
 
 
 if __name__ == "__main__":
-    employee_id = sys.argv[1]
+    user_id = sys.argv[1]
 
-    url_user = "https://jsonplaceholder.typicode.com/users/{}".format(
-        employee_id)
-    url_todos = "https://jsonplaceholder.typicode.com/todos?userId={}".format(
-        employee_id)
+    user_url = "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
+    todos_url = "https://jsonplaceholder.typicode.com/todos?userId={}".format(
+        user_id)
 
-    user = requests.get(url_user).json()
-    todos = requests.get(url_todos).json()
+    user_data = requests.get(user_url).json()
+    todos_data = requests.get(todos_url).json()
 
-    username = user.get("username")
+    username = user_data.get("username")
 
-    tasks_list = []
-    for task in todos:
+    task_list = []
+    for todo in todos_data:
         task_dict = {
-            "task": task.get("title"),
-            "completed": task.get("completed"),
+            "task": todo.get("title"),
+            "completed": todo.get("completed"),
             "username": username
         }
-        tasks_list.append(task_dict)
+        task_list.append(task_dict)
 
-    json_data = {employee_id: tasks_list}
+    export_data = {user_id: task_list}
 
-    filename = "{}.json".format(employee_id)
-    with open(filename, 'w') as json_file:
-        json.dump(json_data, json_file)
+    filename = "{}.json".format(user_id)
+    with open(filename, 'w') as f:
+        json.dump(export_data, f)
