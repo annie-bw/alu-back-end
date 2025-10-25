@@ -1,42 +1,29 @@
 #!/usr/bin/python3
-"""
-This module retrieves todos for a given user from the JSONPlaceholder API
-and displays the completed tasks along with the total number of tasks.
-"""
+"""Script that returns information about a user's TODO list progress"""
 
 import requests
 import sys
 
 
-def fetch_todos():
-    """Fetch all todos from the API and return as a list of dictionaries."""
-    response = requests.get("https://jsonplaceholder.typicode.com/todos")
-    if response.status_code != 200:
-        print("Failed to fetch todos")
-        sys.exit(1)
-    return response.json()
+if __name__ == "__main__":
+    user_id = int(sys.argv[1])
+    user_url = "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
+    todos_url = "https://jsonplaceholder.typicode.com/todos"
 
+    user_response = requests.get(user_url)
+    user_name = user_response.json().get("name")
 
-def fetch_user(user_id):
-    """Fetch user info by user_id and return the user's name."""
-    response = requests.get(
-        f"https://jsonplaceholder.typicode.com/users/{user_id}"
-    )
-    if response.status_code != 200:
-        print("Failed to fetch user information")
-        sys.exit(1)
-    return response.json().get("name", "Unknown")
+    todos_response = requests.get(todos_url)
+    todos = todos_response.json()
 
-
-def display_tasks(user_name, todos, user_id):
-    """
-    Display completed tasks for the given user.
-
-    Args:
-        user_name (str): Name of the user
-        todos (list): List of todo dictionaries
-        user_id (int): ID of the user
-    """
     total_tasks = 0
-    completed_tasks_
+    done_tasks = []
+
+    for todo in todos:
+        if todo.get("userId") == user_id:
+            total_tasks += 1
+            if todo.get("completed"):
+                done_tasks.append(todo.get("title"))
+
+   
 
